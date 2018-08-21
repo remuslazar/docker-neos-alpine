@@ -1,0 +1,4 @@
+#!/usr/bin/with-contenv /bin/bash
+set -ex
+
+sed -Ei "s/(listen[[:space:]]+)[[:digit:]]+([[:space:]]+default_server)/\1${WWW_PORT}\2/" /etc/nginx/nginx.conf
