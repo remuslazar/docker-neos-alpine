@@ -10,6 +10,9 @@ mkdir -p /data/tmp/nginx
 ###
 /provision-neos.sh
 
+# flow cmd wrapper to execute flow as user
+FLOW="sudo -u www-data ./flow"
+
 # On first launch unpack provisioned files into /data/www
 if [ -f /data/www/composer.json ] || [ -z "$REPOSITORY_URL" ]
 then
@@ -61,27 +64,27 @@ if [[ $RESULT -gt 0 ]];
 		fi
 
 
-		cd /data/www
+		cd /data/www || exit 1
 
-		./flow doctrine:migrate
+		${FLOW} doctrine:migrate
 
 		if [ -z "$SITE_PACKAGE" ]
 			then
 				echo "SITE_PACKAGE not set"
 			else
-				./flow site:import --package-key=$SITE_PACKAGE
+				${FLOW} site:import --package-key=$SITE_PACKAGE
 		fi
 
 		if [ -z "$ADMIN_PASSWORD" ]
 			then
 				echo "No ADMIN_PASSWORD set"
 			else
-				./flow user:create --roles='Administrator' --username='admin' --password=$ADMIN_PASSWORD --first-name='UpdateMe' --last-name='Now'
+				${FLOW} user:create --roles='Administrator' --username='admin' --password=$ADMIN_PASSWORD --first-name='UpdateMe' --last-name='Now'
 		fi
 
 		if [ -z "$DONT_PUBLISH_PERSISTENT" ]
 			then
-				./flow resource:publish
+				${FLOW} resource:publish
 		fi
 fi
 
@@ -89,5 +92,5 @@ if [ "$(ls -A /data/www/Web/_Resources/Static/)" ]
 	then
 		echo "No need to publish static resources"
 	else
-		/data/www/flow resource:publish --collection static
+		${FLOW} resource:publish --collection static
 fi
