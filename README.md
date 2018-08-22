@@ -43,7 +43,7 @@ Example docker-compose.yml configuration:
 
 ```
 web:
-  image: dimaip/docker-neos-alpine:latest
+  image: remuslazar/docker-neos-alpine:latest
   ports:
     - '8080:8080'
     - '1122:22'
