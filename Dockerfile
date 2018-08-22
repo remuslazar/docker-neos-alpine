@@ -97,6 +97,13 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && rm /tmp/s6-overlay-amd64.tar.gz
 	&& echo 'www-data ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/www \
 	&& /bin/bash -c "source /init-php-conf.sh"
 
+# Imagick support
+# needed if Neos.Imagine.driver: Imagick
+RUN apk add php7-imagick imagemagick autoconf gcc g++ imagemagick-dev libtool make \
+	&& echo '' | pecl install imagick \
+	&& docker-php-ext-enable imagick \
+	&& apk del autoconf gcc g++ imagemagick-dev libtool
+
 # Expose ports
 EXPOSE 80 22
 
