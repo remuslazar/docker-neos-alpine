@@ -13,6 +13,7 @@ ENV COMPOSER_VERSION 1.6.2
 ENV COMPOSER_HOME /composer
 ENV PATH /composer/vendor/bin:$PATH
 ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_INSTALL_PARAMS --prefer-source
 
 # Set default values for env vars used in init scripts, override them if needed
 ENV WWW_PORT 80

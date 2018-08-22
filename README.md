@@ -25,6 +25,7 @@ This image supports following environment variable for automatically configuring
 |~~BASE_URI~~|2.x image only. If set, set the `baseUri` option in Settings.yaml, optional|
 |DONT_PUBLISH_PERSISTENT| Don't publish persistent assets on init. Needed e.g. for cloud resources.|
 |AWS_BACKUP_ARN|Automatically import the database from `${AWS_RESOURCES_ARN}db.sql` on the first container launch. Requires `AWS_ACCESS_KEY`, `AWS_SECRET_ACCESS_KEY` and `AWS_ENDPOINT` (optional, for S3-compatible storage) to be set in order to work.|
+|COMPOSER_INSTALL_PARAMS|composer install parameters, defaults to `--prefer-source`|
 |DB_AUTO_BACKUP|Automatically backup database at given interval, possible values: `15min`, `hourly`, `daily`, `weekly`, `monthly`. If `AWS_BACKUP_ARN` configured, would also upload the file at `${AWS_RESOURCES_ARN}db.sql` location. |
 |XDEBUG_CONFIG|Pass xdebug config string, e.g. `idekey=PHPSTORM remote_enable=1`. If no config provided the Xdebug extension will be disabled (safe for production), off by default|
 |IMPORT_GITHUB_PUB_KEYS|Will pull authorized keys allowed to connect to this image from your Github account(s).|
@@ -59,6 +60,7 @@ web:
     ADMIN_PASSWORD: 'password'
     IMPORT_GITHUB_PUB_KEYS: 'your-github-user-name'
     AWS_RESOURCES_ARN: 's3://some-bucket/sites/demo/'
+    COMPOSER_INSTALL_PARAMS: '--no-dev'
 db:
   image: mariadb:latest
   expose:
