@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 set -ex
 
+function update_settings_yaml() {
+  local settings_file=$1
+
+  [ -f $settings_file ] || return 0
+
+  echo "Configuring $settings_file..."
+	sed -i -r "1,/driver:/s/port: .+?/driver: pdo_mysql/g" $settings_file
+	sed -i -r "1,/dbname:/s/dbname: .+?/dbname: \"$DB_DATABASE\"/g" $settings_file
+	sed -i -r "1,/user:/s/user: .+?/user: \"$DB_USER\"/g" $settings_file
+	sed -i -r "1,/password:/s/password: .+?/password: \"$DB_PASS\"/g" $settings_file
+	sed -i -r "1,/host:/s/host: .+?/host: \"$DB_HOST\"/g" $settings_file
+	sed -i -r "1,/port:/s/port: .+?/port: 3306/g" $settings_file
+}
+
 # Provision conainer at first run
 if [ -f /data/www/composer.json ] || [ -f /data/www-provisioned/composer.json ] || [ -z "$REPOSITORY_URL" ]
 then
 	echo "Do nothing, initial provisioning done"
+	# Update DB Settings to keep them in sync with the docker ENV vars
+	update_settings_yaml /data/www-provisioned/Configuration/Settings.yaml
 else
     # Make sure to init xdebug, not to slow-down composer
     /init-xdebug.sh
@@ -28,10 +44,14 @@ else
     fi
 
     ###
-    # Copy DB connection settings
+    # Tweak DB connection settings
     ###
     mkdir -p /data/www-provisioned/Configuration
-    cp /Settings.yaml /data/www-provisioned/Configuration/
+		if [ ! -f /data/www-provisioned/Configuration/Settings.yaml ] ; then
+			cp /Settings.yaml /data/www-provisioned/Configuration/
+		fi
+
+		update_settings_yaml /data/www-provisioned/Configuration/Settings.yaml
 
     # Set permissions
     chown www-data:www-data -R /tmp/
