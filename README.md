@@ -72,6 +72,12 @@ db:
     MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
 ```
 
+## Flow/Neos Context
+
+`FLOW_CONTEXT` will be set to `Production` by default. For development use a host name
+with a `dev` subdomain, like `dev.mysite.local`, this will use the `Development`
+context instead.
+
 ## Utility scripts
 
 Also this container provides a couple of utility scripts, they are located in the `/data` folder.
