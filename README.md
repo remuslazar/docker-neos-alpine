@@ -17,6 +17,7 @@ This image supports following environment variable for automatically configuring
 
 | Docker env variable | Description |
 |---------|-------------|
+|WWW_PORT|TCP port on which the container will serve incoming HTTP requests, defaults to `80`.|
 |REPOSITORY_URL|Link to Neos website distribution|
 |VERSION|Git repository branch, commit SHA or release tag, defaults to `master`|
 |SITE_PACKAGE|Neos website package with exported website data to be imported, optional|
@@ -44,13 +45,14 @@ Example docker-compose.yml configuration:
 web:
   image: dimaip/docker-neos-alpine:latest
   ports:
-    - '80'
-    - '22'
+    - '8080:8080'
+    - '1122:22'
   links:
     - db:db
   volumes:
     - /data
   environment:
+    WWW_PORT: 8080
     REPOSITORY_URL: 'https://github.com/neos/neos-development-distribution'
     SITE_PACKAGE: 'Neos.Demo'
     VERSION: '3.3'

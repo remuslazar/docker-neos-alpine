@@ -15,6 +15,7 @@ ENV PATH /composer/vendor/bin:$PATH
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 # Set default values for env vars used in init scripts, override them if needed
+ENV WWW_PORT 80
 ENV DB_DATABASE db
 ENV DB_HOST db
 ENV DB_USER admin
