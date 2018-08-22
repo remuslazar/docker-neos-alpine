@@ -8,6 +8,22 @@ set -e
 [ -f /etc/ssh/ssh_host_ecdsa_key ] || ssh-keygen -q -b 521  -N '' -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
 [ -f /etc/ssh/ssh_host_ed25519_key ] || ssh-keygen -q -b 1024 -N '' -t ed25519 -f /etc/ssh/ssh_host_ed25519_key
 
+mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+
+cat <<EOF >>/root/.ssh/config
+Host *
+   StrictHostKeyChecking no
+   UserKnownHostsFile=/dev/null
+EOF
+
+# Use the supplied RSA key for the root user (composer runs as root)
+if [ -f /run/secrets/id_rsa ] ; then
+	echo "SSH RSA key found in docker secrets. Save it to /root/.ssh/id_rsa."
+	cp /run/secrets/id_rsa /root/.ssh/id_rsa
+	chmod 600 /root/.ssh/id_rsa # just in case
+fi
+
 [ -d /data/.ssh ] || mkdir /data/.ssh
 [ -f /data/.ssh/authorized_keys ] || touch /data/.ssh/authorized_keys
 chown www-data:www-data -R /data/.ssh
