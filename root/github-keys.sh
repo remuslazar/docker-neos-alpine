@@ -19,7 +19,10 @@ else
   else
     echo "Importing $user's GitHub pub key(s) to `whoami` account..."
 
-    mkdir -p ~/.ssh
+    if [ ! -d ~/.ssh ] ; then
+      mkdir ~/.ssh
+      chmod 700 ~/.ssh
+    fi
     if [ ! -f ~/.ssh/authorized_keys ]; then
       touch ~/.ssh/authorized_keys
       chmod 600 ~/.ssh/authorized_keys
