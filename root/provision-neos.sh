@@ -36,13 +36,12 @@ else
     # Set permissions
     chown www-data:www-data -R /tmp/
 	chown www-data:www-data -R /data/
-	chmod g+rwx -R /data/
+	chmod g+rwx -R /data/*
 
 	# Set ssh permissions
 	if [ -z "/data/.ssh/authorized_keys" ]
 		then
 			chown www-data:www-data -R /data/.ssh
-			chmod go-w /data/
 			chmod 700 /data/.ssh
 			chmod 600 /data/.ssh/authorized_keys
 	fi
