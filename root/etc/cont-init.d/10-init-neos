@@ -13,6 +13,9 @@ mkdir -p /data/tmp/nginx
 # flow cmd wrapper to execute flow as user
 FLOW="sudo -u www-data ./flow"
 
+# root dir where SITE_PACKAGE repo resides
+WWW_ROOT="/data/www"
+
 # On first launch unpack provisioned files into /data/www
 if [ -f /data/www/composer.json ] || [ -z "$REPOSITORY_URL" ]
 then
@@ -93,4 +96,11 @@ if [ "$(ls -A /data/www/Web/_Resources/Static/)" ]
 		echo "No need to publish static resources"
 	else
 		${FLOW} resource:publish --collection static
+fi
+
+cd "${WWW_ROOT}"
+
+if [ "${SITE_INIT_SCRIPT}" -a -f "${SITE_INIT_SCRIPT}" ]; then
+	  echo "SITE_INIT_SCRIPT ENV var set, executing $(pwd)/${SITE_INIT_SCRIPT}.."
+		sudo -u www-data "./${SITE_INIT_SCRIPT}"
 fi
