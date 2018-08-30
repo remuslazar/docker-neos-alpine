@@ -34,7 +34,10 @@ This image supports following environment variable for automatically configuring
 |DB_HOST|Database host, defaults to `db`|
 |DB_PASS|Database password, defaults to `pass`|
 |DB_USER|Database user, defaults to `admin`|
-
+|AWS_PROFILE|aws profile to use when configuring the aws cli|
+|AWS_REGION|aws region|
+|AWS_ACCESS_KEY_ID|aws access key|
+|AWS_SECRET_ACCESS_KEY|aws secret key|
 
 In addition to these settings, if you place database sql dump at `Data/Persistent/db.sql`, it would automatically be imported on the first container launch. See above for options to automatically download the data from AWS S3.
 If `beard.json` file is present, your distribution will get [bearded](https://github.com/mneuhaus/Beard).
@@ -55,6 +58,9 @@ web:
     - /data
   environment:
     WWW_PORT: 8080
+#    AWS_REGION: eu-central-1
+#    AWS_ACCESS_KEY_ID: ...
+#    AWS_SECRET_ACCESS_KEY: ...
     REPOSITORY_URL: 'https://github.com/neos/neos-development-distribution'
     SITE_PACKAGE: 'Neos.Demo'
     VERSION: '3.3'
