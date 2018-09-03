@@ -100,6 +100,11 @@ fi
 
 cd "${WWW_ROOT}"
 
+if ${FLOW} help | grep behat:setup >/dev/null ; then
+	${FLOW} behat:setup
+	FLOW_CONTEXT=Development/Behat ${FLOW} cache:warmup
+fi
+
 if [ "${SITE_INIT_SCRIPT}" -a -f "${SITE_INIT_SCRIPT}" ]; then
 	  echo "SITE_INIT_SCRIPT ENV var set, executing $(pwd)/${SITE_INIT_SCRIPT}.."
 		chmod +x "./${SITE_INIT_SCRIPT}"
