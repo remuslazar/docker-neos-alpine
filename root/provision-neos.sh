@@ -43,7 +43,7 @@ function behat_configure_yml_files() {
 }
 
 # Provision conainer at first run
-if [ -f /data/www/composer.json ] || [ -f /data/www-provisioned/composer.json ] || [ -z "$REPOSITORY_URL" ]
+if [ -f /data/www/composer.json ] || [ -f /data/www-provisioned/composer.json ] || [ -z "$REPOSITORY_URL" -a ! -f "/src/composer.json" ]
 then
 	echo "Do nothing, initial provisioning done"
 	# Update DB Settings to keep them in sync with the docker ENV vars
@@ -61,7 +61,13 @@ else
     # Install into /data/www
     ###
     cd /data/www-provisioned
-    git clone -b $VERSION $REPOSITORY_URL .
+
+    if [ "${REPOSITORY_URL}" ] ; then
+      git clone -b $VERSION $REPOSITORY_URL .
+    else
+      rsync -r --exclude node_modules /src/ .
+    fi
+
     composer install $COMPOSER_INSTALL_PARAMS
 
     # Apply beard patches
