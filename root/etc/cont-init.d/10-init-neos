@@ -32,6 +32,8 @@ else
 	fi
 fi
 
+cd /data/www || exit 1
+
 ###
 # Check if DB already exists and is not empty
 ###
@@ -65,9 +67,6 @@ if [[ $RESULT -gt 0 ]];
 			then
 				mysql -u $DB_USER -p$DB_PASS -h $DB_HOST $DB_DATABASE < /data/www/Data/Persistent/db.sql
 		fi
-
-
-		cd /data/www || exit 1
 
 		${FLOW} doctrine:migrate
 
