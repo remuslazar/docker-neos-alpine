@@ -55,7 +55,9 @@ web:
   links:
     - db:db
   volumes:
-    - /data
+    - data:/data
+    # needed only for initial provisioning, if REPOSITORY_URL not set
+    # - .:/src/
   environment:
     WWW_PORT: 8080
 #    AWS_REGION: eu-central-1
@@ -79,7 +81,19 @@ db:
     MYSQL_USER: 'admin'
     MYSQL_PASSWORD: 'pass'
     MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+
+volumes:
+  data:
 ```
+
+## Provisioning Process
+
+For initial privisioning the container, you can use the `REPOSITORY_URL` ENV var.
+If so, the initialization logic will perform a `git clone`.
+
+Another alternative is to use a Docker mount or volume. Mount the source dir to
+`/src` and make sure not to set the `REPOSITORY_URL`. Then the init logic will just
+`rsync -a` from /src to `/data/www-provisioned` instead.
 
 ## Flow/Neos Context
 
