@@ -99,7 +99,7 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && rm /tmp/s6-overlay-amd64.tar.gz
 
 # Imagick support
 # needed if Neos.Imagine.driver: Imagick
-RUN apk add php7-imagick imagemagick autoconf gcc g++ imagemagick-dev libtool make \
+RUN apk --no-cache add php7-imagick imagemagick autoconf gcc g++ imagemagick-dev libtool make \
 	&& echo '' | pecl install imagick \
 	&& docker-php-ext-enable imagick \
 	&& apk del autoconf gcc g++ imagemagick-dev libtool
