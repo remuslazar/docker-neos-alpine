@@ -65,7 +65,7 @@ else
     if [ "${REPOSITORY_URL}" ] ; then
       git clone -b $VERSION $REPOSITORY_URL .
     else
-      rsync -r --exclude node_modules /src/ .
+      rsync -r --exclude node_modules --exclude .git --exclude /Data /src/ .
     fi
 
     composer install $COMPOSER_INSTALL_PARAMS
