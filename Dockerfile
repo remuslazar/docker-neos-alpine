@@ -105,8 +105,7 @@ RUN apk --no-cache add php7-imagick imagemagick autoconf gcc g++ imagemagick-dev
 	&& apk del autoconf gcc g++ imagemagick-dev libtool
 
 # Install jq utility (used to parse JSON in e.g. Makefiles)
-# Install wait4ports utility (to wait for the mysql server to come up on init time)
-RUN apk --no-cache add jq wait4ports
+RUN apk --no-cache add jq
 
 # Expose ports
 EXPOSE 80 22
