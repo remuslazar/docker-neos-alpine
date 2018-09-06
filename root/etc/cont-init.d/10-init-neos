@@ -37,6 +37,10 @@ cd /data/www || exit 1
 ###
 # Check if DB already exists and is not empty
 ###
+
+# wait for the mysql server to come up
+wait4ports tcp://${DB_HOST}:3306
+
 set +e
 RESULT=`mysql -u $DB_USER -p$DB_PASS -h $DB_HOST -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema ='${DB_DATABASE}'" --batch --skip-column-names`
 set -e
