@@ -26,7 +26,7 @@ jobs:
           command: |
             docker run --name=web --link=db:db \
               --env="REPOSITORY_URL=https://github.com/neos/neos-development-distribution" \
-              --env="VERSION=3.3" \
+              --env="VERSION=2.3" \
               --env="SITE_PACKAGE=Neos.Demo" \
               docker-neos-alpine
       - run: while true; do if docker logs web 2>&1 | grep "ready to handle connections"; then break; else echo "Waiting for web container to finish provisioning..." && sleep 10; fi done
