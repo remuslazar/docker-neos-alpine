@@ -19,7 +19,7 @@ jobs:
           name: Run the docker web container
           background: true
           command: |
-            docker run --name=web -p=8000:80 --link=db:db \
+            docker run --name=web --link=db:db \
               --env="REPOSITORY_URL=https://github.com/neos/neos-development-distribution" \
               --env="VERSION=3.3" \
               --env="SITE_PACKAGE=Neos.Demo" \
