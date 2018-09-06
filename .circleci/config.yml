@@ -6,15 +6,20 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build --tag=docker-neos-alpine .
-      # use the official mariadb image using default values (user/pass etc.)
-      - run: |
-          docker run -d --name=db --env="MYSQL_DATABASE=db" \
-            --env="MYSQL_DATABASE=db" \
-            --env="MYSQL_USER=admin" \
-            --env="MYSQL_PASSWORD=pass" \
-            --env="MYSQL_RANDOM_ROOT_PASSWORD=yes" \
-            mariadb:latest
+
+      - run:
+          name: Build the docker image
+          command: docker build --tag=docker-neos-alpine .
+      - run:
+          name: Run the docker DB container
+          # use the official mariadb image using default values (user/pass etc.)
+          command: |
+            docker run -d --name=db --env="MYSQL_DATABASE=db" \
+              --env="MYSQL_DATABASE=db" \
+              --env="MYSQL_USER=admin" \
+              --env="MYSQL_PASSWORD=pass" \
+              --env="MYSQL_RANDOM_ROOT_PASSWORD=yes" \
+              mariadb:latest
       - run:
           name: Run the docker web container
           background: true
@@ -25,12 +30,13 @@ jobs:
               --env="SITE_PACKAGE=Neos.Demo" \
               docker-neos-alpine
       - run: while true; do if docker logs web 2>&1 | grep "ready to handle connections"; then break; else echo "Waiting for web container to finish provisioning..." && sleep 10; fi done
-      # Test: do basic front-end tests
-      - run: |
-          docker run --rm --volumes-from=web --link=web alpine /bin/sh -c 'apk add curl -q \
-           && curl -s -L --head http://web | grep "HTTP/1.1 200 OK" \
-           && curl -s -L --head http://web | grep "X-Flow-Powered" \
-           && curl -s -L http://web | grep "This website is powered by Neos"'
+      - run:
+          name: Do basic front-end tests
+          command: |
+            docker run --rm --volumes-from=web --link=web alpine /bin/sh -c 'apk add curl -q \
+             && curl -s -L --head http://web | grep "HTTP/1.1 200 OK" \
+             && curl -s -L --head http://web | grep "X-Flow-Powered" \
+             && curl -s -L http://web | grep "This website is powered by Neos"'
 
 workflows:
   version: 2
