@@ -7,7 +7,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build --tag=docker-neos-alpine .
-      - run: echo 127.0.0.1 test.loc | sudo tee -a /etc/hosts
+      - run: echo 127.0.0.1 test.loc | tee -a /etc/hosts
       # use the official mariadb image using default values (user/pass etc.)
       - run: |
           docker run -d --name=db --env="MYSQL_DATABASE=db" \
