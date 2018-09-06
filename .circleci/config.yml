@@ -1,0 +1,45 @@
+version: 2
+jobs:
+  build-and-test:
+    docker:
+      - image: docker:stable-git
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run:
+          name: Build the docker image
+          command: docker build --tag=docker-neos-alpine .
+      - run:
+          name: Run the docker DB container
+          # use the official mariadb image using default values (user/pass etc.)
+          command: |
+            docker run -d --name=db --env="MYSQL_DATABASE=db" \
+              --env="MYSQL_DATABASE=db" \
+              --env="MYSQL_USER=admin" \
+              --env="MYSQL_PASSWORD=pass" \
+              --env="MYSQL_RANDOM_ROOT_PASSWORD=yes" \
+              mariadb:latest
+      - run:
+          name: Run the docker web container
+          background: true
+          command: |
+            docker run --name=web --link=db:db \
+              --env="REPOSITORY_URL=https://github.com/neos/neos-development-distribution" \
+              --env="VERSION=3.3" \
+              --env="SITE_PACKAGE=Neos.Demo" \
+              docker-neos-alpine
+      - run: while true; do if docker logs web 2>&1 | grep "ready to handle connections"; then break; else echo "Waiting for web container to finish provisioning..." && sleep 10; fi done
+      - run:
+          name: Do basic front-end tests
+          command: |
+            docker run --rm --volumes-from=web --link=web alpine /bin/sh -c 'apk add curl -q \
+             && curl -s -L --head http://web | grep "HTTP/1.1 200 OK" \
+             && curl -s -L --head http://web | grep "X-Flow-Powered" \
+             && curl -s -L http://web | grep "This website is powered by Neos"'
+
+workflows:
+  version: 2
+  all:
+    jobs:
+      - build-and-test
