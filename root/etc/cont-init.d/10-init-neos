@@ -39,7 +39,10 @@ cd /data/www || exit 1
 ###
 
 # wait for the mysql server to come up
-wait4ports tcp://${DB_HOST}:3306
+while ! mysqladmin ping -u "${DB_USER}" -p"${DB_PASS}" -h"${DB_HOST}" --silent; do
+	echo "waiting for the db container to become available.."
+  sleep 2
+done
 
 set +e
 RESULT=`mysql -u $DB_USER -p$DB_PASS -h $DB_HOST -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema ='${DB_DATABASE}'" --batch --skip-column-names`
