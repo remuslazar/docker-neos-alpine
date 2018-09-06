@@ -16,12 +16,15 @@ jobs:
             --env="MYSQL_PASSWORD=pass" \
             --env="MYSQL_RANDOM_ROOT_PASSWORD=yes" \
             mariadb:latest
-      - run: |
-          docker run -d --name=web --p=8000:80 --link=db:db \
-            --env="REPOSITORY_URL=https://github.com/neos/neos-development-distribution" \
-            --env="VERSION=3.3" \
-            --env="SITE_PACKAGE=Neos.Demo" \
-            docker-neos-alpine
+      - run:
+          name: Run the docker web container
+          background: true
+          command: |
+            docker run --name=web -p=8000:80 --link=db:db \
+              --env="REPOSITORY_URL=https://github.com/neos/neos-development-distribution" \
+              --env="VERSION=3.3" \
+              --env="SITE_PACKAGE=Neos.Demo" \
+              docker-neos-alpine
       - run: while true; do if docker logs web 2>&1 | grep "ready to handle connections"; then break; else echo "Waiting for web container to finish provisioning..." && sleep 10; fi done
       # Test: do basic front-end tests
       - run: curl -L --head http://test.loc:8000 && curl -s -L http://test.loc:8000
