@@ -7,7 +7,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker build --tag=docker-neos-alpine .
-      - run: echo 127.0.0.1 test.loc | tee -a /etc/hosts
       # use the official mariadb image using default values (user/pass etc.)
       - run: |
           docker run -d --name=db --env="MYSQL_DATABASE=db" \
@@ -27,10 +26,11 @@ jobs:
               docker-neos-alpine
       - run: while true; do if docker logs web 2>&1 | grep "ready to handle connections"; then break; else echo "Waiting for web container to finish provisioning..." && sleep 10; fi done
       # Test: do basic front-end tests
-      - run: apk add --no-cache curl grep
-      - run: curl -L --head http://test.loc:8000 && curl -s -L http://test.loc:8000
-      - run: curl -s -L --head http://test.loc:8000 | grep "HTTP/1.1 200 OK" && curl -s -L --head http://test.loc:8000 | grep "X-Flow-Powered"
-      - run: curl -s -L http://test.loc:8000 | grep "This website is powered by Neos"
+      - run: |
+          docker run --rm --volumes-from=web --link=web alpine /bin/sh -c 'apk add curl -q \
+           && curl -s -L --head http://web | grep "HTTP/1.1 200 OK" \
+           && curl -s -L --head http://web | grep "X-Flow-Powered" \
+           && curl -s -L http://web | grep "This website is powered by Neos"'
 
 workflows:
   version: 2
