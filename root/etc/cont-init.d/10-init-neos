@@ -106,7 +106,7 @@ fi
 
 cd "${WWW_ROOT}"
 
-if ${FLOW} help | grep behat:setup >/dev/null ; then
+if [ "${SETUP_BEHAT}" = true ] && ${FLOW} help | grep behat:setup >/dev/null ; then
 	${FLOW} behat:setup
 	FLOW_CONTEXT=Development/Behat ${FLOW} cache:warmup
 fi
