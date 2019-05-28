@@ -80,7 +80,7 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && rm /tmp/s6-overlay-amd64.tar.gz
 	&& deluser www-data \
 	&& delgroup cdrw \
 	&& addgroup -g 80 www-data \
-	&& adduser -u 80 -G www-data -s /bin/bash -D www-data -h /data \
+	&& adduser -u 80 -G www-data -s /bin/bash -D www-data -h /data -k /etc/skel_www \
 	&& rm -Rf /home/www-data \
 	&& sed -i -e "s#listen = 9000#listen = /var/run/php-fpm.sock#" /usr/local/etc/php-fpm.d/zz-docker.conf \
 	&& echo "clear_env = no" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
