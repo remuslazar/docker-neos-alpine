@@ -20,7 +20,6 @@ This image supports following environment variable for automatically configuring
 |WWW_PORT|TCP port on which the container will serve incoming HTTP requests, defaults to `80`.|
 |REPOSITORY_URL|Link to Neos website distribution|
 |SITE_INIT_SCRIPT|If set, a path (relative to SITE_PACKAGE folder) to a bash script which will be called (synchronously) after the container is ready but prior to nginx. Note that this script will be executed as user `www-data` (and not root!) |
-|SETUP_BEHAT|If set to `true`, the init process will call `flow behat:setup` and also do a `cache:warmup` for the `Development/Behat` context. Default it `false`.|
 |VERSION|Git repository branch, commit SHA or release tag, defaults to `master`|
 |SITE_PACKAGE|Neos website package with exported website data to be imported, optional|
 |ADMIN_PASSWORD|If set, would create a Neos `admin` user with such password, optional|

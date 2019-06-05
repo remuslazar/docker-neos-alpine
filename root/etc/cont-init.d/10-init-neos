@@ -11,7 +11,7 @@ mkdir -p /data/tmp/nginx
 /provision-neos.sh
 
 # flow cmd wrapper to execute flow as user
-FLOW="sudo -u www-data ./flow"
+FLOW="sudo -u www-data FLOW_CONTEXT=${FLOW_CONTEXT} ./flow"
 
 # root dir where SITE_PACKAGE repo resides
 WWW_ROOT="/data/www"
@@ -32,7 +32,7 @@ else
 	fi
 fi
 
-cd /data/www || exit 1
+cd ${WWW_ROOT} || exit 1
 
 ###
 # Check if DB already exists and is not empty
@@ -106,13 +106,8 @@ fi
 
 cd "${WWW_ROOT}"
 
-if [ "${SETUP_BEHAT}" = true ] && ${FLOW} help | grep behat:setup >/dev/null ; then
-	${FLOW} behat:setup
-	FLOW_CONTEXT=Development/Behat ${FLOW} cache:warmup
-fi
-
 if [ "${SITE_INIT_SCRIPT}" -a -f "${SITE_INIT_SCRIPT}" ]; then
-	  echo "SITE_INIT_SCRIPT ENV var set, executing $(pwd)/${SITE_INIT_SCRIPT}.."
+	  echo "SITE_INIT_SCRIPT ENV var set, executing FLOW_CONTEXT=${FLOW_CONTEXT} $(pwd)/${SITE_INIT_SCRIPT}.."
 		chmod +x "./${SITE_INIT_SCRIPT}"
-		sudo -u www-data "./${SITE_INIT_SCRIPT}"
+		sudo -u www-data FLOW_CONTEXT=${FLOW_CONTEXT} "./${SITE_INIT_SCRIPT}"
 fi
