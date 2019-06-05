@@ -75,7 +75,7 @@ if [[ $RESULT -gt 0 ]];
 				mysql -u $DB_USER -p$DB_PASS -h $DB_HOST $DB_DATABASE < /data/www/Data/Persistent/db.sql
 		fi
 
-		${FLOW} doctrine:migrate
+		${FLOW} doctrine:migrate --quiet
 
 		if [ -z "$SITE_PACKAGE" ]
 			then
