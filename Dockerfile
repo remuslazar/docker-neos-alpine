@@ -65,9 +65,6 @@ RUN set -x \
 	&& git config --global user.name "Server" \
 	&& rm -rf /var/cache/apk/*
 
-# Copy configuration
-COPY root /
-
 # Download s6
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_VERSION}/s6-overlay-amd64.tar.gz /tmp/
 
@@ -77,25 +74,11 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && rm /tmp/s6-overlay-amd64.tar.gz
 	&& echo "xdebug.max_nesting_level=512" >> $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini \
 	&& echo "xdebug.idekey=\"PHPSTORM\"" >> $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini \
 	&& echo "xdebug.remote_host=172.17.0.1" >> $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini \
-	&& deluser www-data \
-	&& delgroup cdrw \
-	&& addgroup -g 80 www-data \
-	&& adduser -u 80 -G www-data -s /bin/bash -D www-data -h /data -k /etc/skel_www \
-	&& rm -Rf /home/www-data \
-	&& sed -i -e "s#listen = 9000#listen = /var/run/php-fpm.sock#" /usr/local/etc/php-fpm.d/zz-docker.conf \
-	&& echo "clear_env = no" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-	&& echo "listen.owner = www-data" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-	&& echo "listen.group = www-data" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-	&& echo "listen.mode = 0660" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
-	&& chown 80:80 -R /var/lib/nginx \
-	&& chmod +x /github-keys.sh \
 	&& sed -i -r 's/.?UseDNS\syes/UseDNS no/' /etc/ssh/sshd_config \
 	&& sed -i -r 's/.?PasswordAuthentication.+/PasswordAuthentication no/' /etc/ssh/sshd_config \
 	&& sed -i -r 's/.?ChallengeResponseAuthentication.+/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config \
 	&& sed -i -r 's/.?PermitRootLogin.+/PermitRootLogin no/' /etc/ssh/sshd_config \
-	&& sed -i '/secure_path/d' /etc/sudoers \
-	&& echo 'www-data ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/www \
-	&& /bin/bash -c "source /init-php-conf.sh"
+	&& sed -i '/secure_path/d' /etc/sudoers
 
 # Imagick support
 # needed if Neos.Imagine.driver: Imagick
@@ -106,6 +89,24 @@ RUN apk --no-cache add php7-imagick imagemagick autoconf gcc g++ imagemagick-dev
 
 # Install jq utility (used to parse JSON in e.g. Makefiles)
 RUN apk --no-cache add jq
+
+# Copy container-files
+COPY root /
+
+RUN deluser www-data \
+	&& delgroup cdrw \
+	&& addgroup -g 80 www-data \
+	&& adduser -u 80 -G www-data -s /bin/bash -D www-data -h /data -k /etc/skel_www \
+	&& echo 'www-data ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/www \
+	&& rm -Rf /home/www-data \
+	&& sed -i -e "s#listen = 9000#listen = /var/run/php-fpm.sock#" /usr/local/etc/php-fpm.d/zz-docker.conf \
+	&& echo "clear_env = no" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+	&& echo "listen.owner = www-data" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+	&& echo "listen.group = www-data" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+	&& echo "listen.mode = 0660" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+	&& chown 80:80 -R /var/lib/nginx \
+	&& chmod +x /github-keys.sh \
+	&& /bin/bash -c "source /init-php-conf.sh"
 
 # Expose ports
 EXPOSE 80 22
